@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HydroTrain Monitor
+
+> Industrial monitoring platform for Hydrogen-powered Train systems.
+
+![HydroTrain Monitor Dashboard](public/screenshots/dashboard.png)
+
+## Overview
+
+HydroTrain Monitor is a modern, real-time monitoring platform designed for a hydrogen-powered train. It provides comprehensive telemetry visualization, interactive system diagrams, alarm management, and historical data analysis.
+
+Built with a **data-source-agnostic architecture**, the frontend is completely decoupled from how data is generated — whether from a simulation engine, a REST API, or a CAN Bus gateway.
+
+## Features
+
+- **Dashboard** — Real-time KPI cards (power, hydrogen consumption, efficiency, range, temperature, system status)
+- **Digital Twin** — Interactive 2D system diagram built with React Flow; click any component to inspect metrics, health, and events
+- **Live Monitoring** — Real-time telemetry table with all system variables
+- **Historical Charts** — Trend analysis for power, voltage, temperature, pressure, SOC, and motor RPM
+- **Alarm Center** — Filterable alarm management with severity levels (critical, warning, info)
+- **Simulation Controls** — Configurable data simulator with speed multiplier and fault injection
+- **Settings** — Application configuration (future: user preferences)
+
+## Architecture
+
+```
+┌─────────────┐     ┌──────────────┐     ┌───────────────┐
+│  Simulator  │────▶│   Services   │────▶│  Zustand      │
+│  Engine     │     │   Layer      │     │  Stores       │
+└─────────────┘     └──────────────┘     └───────┬───────┘
+                                                  │
+                                                  ▼
+                                          ┌───────────────┐
+                                          │  React        │
+                                          │  Components   │
+                                          └───────────────┘
+```
+
+The **Services Layer** is the key abstraction. Today it wraps the simulator. Tomorrow it wraps REST API calls — without changing a single component.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture documentation.
+
+## Tech Stack
+
+| Category | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript (strict mode) |
+| Styling | TailwindCSS v4 |
+| UI Components | shadcn/ui |
+| State Management | Zustand |
+| Charts | Recharts |
+| Diagram | React Flow |
+| Icons | Lucide React |
+| Animations | Framer Motion |
+| Code Quality | ESLint, Prettier |
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Run linter
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application runs at [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Next.js App Router pages
+├── features/               # Feature-first modules
+│   ├── dashboard/
+│   ├── digital-twin/
+│   ├── monitoring/
+│   ├── alarms/
+│   ├── reports/
+│   ├── simulation/
+│   └── settings/
+├── shared/                 # Reusable components, hooks, types, utilities
+├── services/               # Data abstraction layer
+├── store/                  # Zustand state management
+└── utils/                  # Constants, formatters, colors
+```
 
-## Learn More
+## Documentation
 
-To learn more about Next.js, take a look at the following resources:
+| Document | Description |
+|---|---|
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture (current & future) |
+| [ROADMAP.md](ROADMAP.md) | Development roadmap |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
+| [DATA_MODEL.md](DATA_MODEL.md) | Entity definitions |
+| [COMPONENTS.md](COMPONENTS.md) | Train subsystem documentation |
+| [SIMULATOR.md](SIMULATOR.md) | Simulation engine |
+| [API.md](API.md) | Future REST API |
+| [CAN_INTEGRATION.md](CAN_INTEGRATION.md) | Future CAN Bus integration |
+| [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) | UI design tokens |
+| [UI_GUIDE.md](UI_GUIDE.md) | Screen-by-screen guide |
+| [REQUIREMENTS.md](REQUIREMENTS.md) | Functional & non-functional requirements |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Roadmap
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Phase 1 — Frontend MVP (Current)
+- [x] Interactive dashboard with KPI cards
+- [x] Digital Twin with React Flow
+- [x] Real-time monitoring
+- [x] Historical charting
+- [x] Alarm management
+- [x] Simulation engine
+- [x] Data abstraction layer
 
-## Deploy on Vercel
+### Phase 2 — Backend
+- [ ] REST API implementation
+- [ ] WebSocket for real-time data
+- [ ] PostgreSQL database
+- [ ] Authentication & authorization
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Phase 3 — CAN Integration
+- [ ] CAN Bus gateway service
+- [ ] DBC file decoder
+- [ ] Real ECU telemetry
+- [ ] Hardware-in-the-loop testing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Phase 4 — Production
+- [ ] Containerization (Docker)
+- [ ] CI/CD pipeline
+- [ ] Monitoring & alerting
+- [ ] Load testing
+
+### Phase 5 — AI & Advanced
+- [ ] Predictive maintenance
+- [ ] Anomaly detection
+- [ ] Fleet monitoring
+- [ ] Multi-tenant support
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
