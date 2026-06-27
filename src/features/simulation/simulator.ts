@@ -328,19 +328,19 @@ export class Simulator {
     let alarm: Alarm | null = null;
 
     if (s.fuelCellTemp > 68 && r < 0.3) {
-      alarm = this.createAlarm("critical", "Fuel Cell Overtemperature", `Temperature at ${s.fuelCellTemp.toFixed(1)}°C exceeds threshold`, "fuel-cell");
+      alarm = this.createAlarm("critical", "Sobretemperatura en Celda", `Temperatura de ${s.fuelCellTemp.toFixed(1)}°C supera el umbral`, "fuel-cell");
     } else if (s.batterySoc < 15 && r < 0.25) {
-      alarm = this.createAlarm("warning", "Low Battery State of Charge", `SOC at ${s.batterySoc.toFixed(1)}%`, "battery");
+      alarm = this.createAlarm("warning", "Carga de Batería Baja", `SOC al ${s.batterySoc.toFixed(1)}%`, "battery");
     } else if (s.h2Pressure < 50 && r < 0.2) {
-      alarm = this.createAlarm("critical", "Low Hydrogen Pressure", `Pressure at ${s.h2Pressure.toFixed(1)} bar`, "hydrogen-tank");
+      alarm = this.createAlarm("critical", "Presión de H₂ Baja", `Presión de ${s.h2Pressure.toFixed(1)} bar`, "hydrogen-tank");
     } else if (s.motorTemp > 105 && r < 0.2) {
-      alarm = this.createAlarm("critical", "Motor Overtemperature", `Motor temperature at ${s.motorTemp.toFixed(1)}°C`, "traction-motor");
+      alarm = this.createAlarm("critical", "Sobretemperatura en Motor", `Motor a ${s.motorTemp.toFixed(1)}°C`, "traction-motor");
     } else if (s.inverterTemp > 75 && r < 0.15) {
-      alarm = this.createAlarm("warning", "Inverter Temperature High", `Inverter at ${s.inverterTemp.toFixed(1)}°C`, "inverter");
+      alarm = this.createAlarm("warning", "Temperatura Alta en Inversor", `Inversor a ${s.inverterTemp.toFixed(1)}°C`, "inverter");
     } else if (s.wheelSlip > 0.08 && r < 0.2) {
-      alarm = this.createAlarm("warning", "Excessive Wheel Slip", `Wheel slip at ${(s.wheelSlip * 100).toFixed(1)}%`, "wheels");
+      alarm = this.createAlarm("warning", "Deslizamiento Excesivo", `Deslizamiento del ${(s.wheelSlip * 100).toFixed(1)}%`, "wheels");
     } else if (r < 0.15) {
-      alarm = this.createAlarm("info", "Routine Maintenance Advisory", `Scheduled maintenance approaching for fuel cell stack`, "fuel-cell");
+      alarm = this.createAlarm("info", "Mantenimiento Preventivo", "Se acerca mantenimiento programado para la celda de combustible", "fuel-cell");
     }
 
     if (alarm) {
@@ -381,7 +381,7 @@ export class Simulator {
       kpis: [
         {
           id: "total-power",
-          label: "Total Power",
+          label: "Potencia Total",
           value: s.fuelCellPower + s.batteryPower,
           unit: "kW",
           trend: s.loadDemand > 0.5 ? "up" : "down",
@@ -390,7 +390,7 @@ export class Simulator {
         },
         {
           id: "h2-consumption",
-          label: "Hydrogen Consumption",
+          label: "Consumo de H₂",
           value: s.h2FlowRate,
           unit: "kg/h",
           trend: s.h2FlowRate > 0.15 ? "up" : "down",
@@ -399,7 +399,7 @@ export class Simulator {
         },
         {
           id: "estimated-range",
-          label: "Estimated Range",
+          label: "Rango Estimado",
           value: range,
           unit: "km",
           trend: "down",
@@ -408,7 +408,7 @@ export class Simulator {
         },
         {
           id: "efficiency",
-          label: "Efficiency",
+          label: "Eficiencia",
           value: efficiency,
           unit: "%",
           trend: efficiency > 55 ? "up" : "down",
@@ -417,7 +417,7 @@ export class Simulator {
         },
         {
           id: "avg-temp",
-          label: "Avg Temperature",
+          label: "Temp. Promedio",
           value: (s.fuelCellTemp + s.motorTemp + s.inverterTemp + s.batteryTemp) / 4,
           unit: "°C",
           trend: s.loadDemand > 0.6 ? "up" : "stable",
@@ -426,7 +426,7 @@ export class Simulator {
         },
         {
           id: "system-status",
-          label: "System Status",
+          label: "Estado del Sistema",
           value: s.fuelCellTemp > 68 || s.motorTemp > 105 ? 0 : s.batterySoc < 15 || s.h2Level < 20 ? 1 : 2,
           unit: "",
           trend: "stable",

@@ -17,12 +17,12 @@ import { formatPower, formatNumber, formatPercentage, formatTemperature } from "
 import { formatDuration } from "@/utils/formatters";
 
 export default function DashboardPage() {
-  const { data, loading } = useDashboardStore();
+  const { data, initialized } = useDashboardStore();
 
-  if (loading || !data) {
+  if (!initialized || !data) {
     return (
-      <div className="p-6 space-y-6">
-        <PageHeader title="Dashboard" description="System Overview" />
+    <div className="p-4 md:p-6 space-y-6">
+        <PageHeader title="Dashboard" description="Resumen del Sistema" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="glass-card h-24 animate-pulse" />
@@ -31,6 +31,17 @@ export default function DashboardPage() {
       </div>
     );
   }
+
+  const kpiLabels: Record<string, string> = {
+    "total-power": "Potencia Total",
+    "h2-consumption": "Consumo de H₂",
+    "estimated-range": "Rango Estimado",
+    "efficiency": "Eficiencia",
+    "avg-temp": "Temp. Promedio",
+    "system-status": "Estado del Sistema",
+  };
+
+  const statusValues = ["Crítico", "Advertencia", "Operacional"];
 
   const kpiIcons: Record<string, React.ReactNode> = {
     "total-power": <Zap className="w-4 h-4" />,
@@ -43,16 +54,16 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <PageHeader title="Dashboard" description="System Overview" />
+      <PageHeader title="Dashboard" description="Resumen del Sistema" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {data.kpis.map((kpi) => (
           <KpiCard
             key={kpi.id}
-            label={kpi.label}
+            label={kpiLabels[kpi.id] ?? kpi.label}
             value={
               kpi.id === "system-status"
-                ? ["Critical", "Warning", "Operational"][kpi.value] || "Unknown"
+                ? statusValues[kpi.value] ?? "Desconocido"
                 : kpi.id === "avg-temp"
                   ? formatTemperature(kpi.value)
                   : kpi.id === "efficiency"
@@ -74,16 +85,16 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <GlassPanel className="lg:col-span-2 p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-4">System Overview</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-4">Resumen del Sistema</h3>
           <div className="flex flex-col gap-3">
-            <StatusRow label="System Status" value={<StatusBadge status={data.systemStatus} />} />
-            <StatusRow label="Uptime" value={formatDuration(data.uptime)} />
+            <StatusRow label="Estado del Sistema" value={<StatusBadge status={data.systemStatus} />} />
+            <StatusRow label="Tiempo Activo" value={formatDuration(data.uptime)} />
             <StatusRow
-              label="Current Power"
+              label="Potencia Actual"
               value={formatPower(data.currentPower)}
             />
             <StatusRow
-              label="Hydrogen Level"
+              label="Nivel de Hidrógeno"
               value={formatPercentage(data.hydrogenLevel)}
               indicator={
                 <div className="w-full bg-[var(--color-secondary)] rounded-full h-2 mt-1">
@@ -95,7 +106,7 @@ export default function DashboardPage() {
               }
             />
             <StatusRow
-              label="Battery SOC"
+              label="SOC Batería"
               value={formatPercentage(data.stateOfCharge)}
               indicator={
                 <div className="w-full bg-[var(--color-secondary)] rounded-full h-2 mt-1">
@@ -110,29 +121,29 @@ export default function DashboardPage() {
         </GlassPanel>
 
         <GlassPanel className="p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-4">Quick Stats</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-4">Estadísticas Rápidas</h3>
           <div className="flex flex-col gap-3">
-            <MiniStat label="Fuel Cell Temp" value={formatTemperature(data.kpis[4]?.value ?? 0)} />
-            <MiniStat label="Active Alarms" value={String(data.activeAlarms)} color="text-[var(--color-warning)]" />
-            <MiniStat label="Hydrogen Remaining" value={formatPercentage(data.hydrogenLevel)} />
-            <MiniStat label="Battery SOC" value={formatPercentage(data.stateOfCharge)} />
-            <MiniStat label="Efficiency" value={formatPercentage(data.kpis[3]?.value ?? 0)} />
+            <MiniStat label="Temp. Celda Combustible" value={formatTemperature(data.kpis[4]?.value ?? 0)} />
+            <MiniStat label="Alertas Activas" value={String(data.activeAlarms)} color="text-[var(--color-warning)]" />
+            <MiniStat label="H₂ Restante" value={formatPercentage(data.hydrogenLevel)} />
+            <MiniStat label="SOC Batería" value={formatPercentage(data.stateOfCharge)} />
+            <MiniStat label="Eficiencia" value={formatPercentage(data.kpis[3]?.value ?? 0)} />
           </div>
         </GlassPanel>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GlassPanel className="p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Power Distribution</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-3">Distribución de Potencia</h3>
           <div className="space-y-2">
             <BarRow label="Fuel Cell" value={65} color="#3b82f6" />
             <BarRow label="Battery" value={25} color="#22c55e" />
-            <BarRow label="Recovery" value={10} color="#06b6d4" />
+            <BarRow label="Recuperación" value={10} color="#06b6d4" />
           </div>
         </GlassPanel>
 
         <GlassPanel className="p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-3">System Health</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-3">Salud del Sistema</h3>
           <div className="space-y-2">
             <BarRow label="Hydrogen Tank" value={85} color="#14b8a6" />
             <BarRow label="Fuel Cell" value={72} color="#3b82f6" />
@@ -186,7 +197,7 @@ function MiniStat({
 function BarRow({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-[var(--color-muted)] w-28 flex-shrink-0">{label}</span>
+      <span className="text-xs text-[var(--color-muted)] w-20 md:w-28 flex-shrink-0 truncate">{label}</span>
       <div className="flex-1 bg-[var(--color-secondary)] rounded-full h-2">
         <div
           className="rounded-full h-2 transition-all duration-300"

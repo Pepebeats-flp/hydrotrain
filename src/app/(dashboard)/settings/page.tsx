@@ -7,34 +7,34 @@ import { PageHeader } from "@/shared/components/PageHeader";
 const SETTINGS_GROUPS = [
   {
     icon: Monitor,
-    title: "Display",
-    description: "Theme, layout, chart preferences",
-    options: ["Dark Theme (Fixed)", "Sidebar: Collapsible", "Chart Refresh: 500ms"],
+    title: "Pantalla",
+    description: "Tema, diseño, preferencias de gráficos",
+    options: ["Tema Oscuro: Fijo", "Barra Lateral: Colapsable", "Actualización Gráficos: 500ms"],
   },
   {
     icon: Bell,
-    title: "Notifications",
-    description: "Alarm notification preferences",
-    options: ["Critical Alarms: Enabled", "Warning Alarms: Enabled", "Info Alarms: Disabled"],
+    title: "Notificaciones",
+    description: "Preferencias de notificaciones de alertas",
+    options: ["Alertas Críticas: Activadas", "Alertas de Advertencia: Activadas", "Alertas Informativas: Desactivadas"],
   },
   {
     icon: Activity,
-    title: "Telemetry",
-    description: "Data polling and display settings",
-    options: ["Polling Interval: 100ms", "History Buffer: 300 points", "Decimal Precision: 1"],
+    title: "Telemetría",
+    description: "Configuración de sondeo y visualización de datos",
+    options: ["Intervalo de Sondeo: 100ms", "Buffer de Historial: 300 puntos", "Precisión Decimal: 1"],
   },
   {
     icon: Palette,
-    title: "Theme",
-    description: "Color scheme and appearance",
-    options: ["Accent Color: Blue", "Status Colors: Default", "Animation Speed: Normal"],
+    title: "Tema",
+    description: "Esquema de colores y apariencia",
+    options: ["Color de Acento: Azul", "Colores de Estado: Por defecto", "Velocidad de Animación: Normal"],
   },
 ];
 
 export default function SettingsPage() {
   return (
-    <div className="p-6 space-y-6">
-      <PageHeader title="Settings" description="Application configuration" />
+    <div className="p-4 md:p-6 space-y-6">
+      <PageHeader title="Configuración" description="Configuración de la aplicación" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {SETTINGS_GROUPS.map((group) => {
@@ -66,13 +66,13 @@ export default function SettingsPage() {
       <GlassPanel className="p-5">
         <div className="flex items-center gap-2 mb-3">
           <Settings2 className="w-4 h-4 text-[var(--color-muted)]" />
-          <h3 className="text-sm font-semibold text-foreground">About HydroTrain Monitor</h3>
+          <h3 className="text-sm font-semibold text-foreground">Acerca de HydroTrain Monitor</h3>
         </div>
         <p className="text-xs text-[var(--color-muted)] leading-relaxed">
-          Version 0.1.0 · Frontend MVP · Built with Next.js, React, TypeScript, TailwindCSS
+          Versión 0.1.0 · Frontend MVP · Construido con Next.js, React, TypeScript, TailwindCSS
         </p>
         <p className="text-xs text-[var(--color-muted)] leading-relaxed mt-1">
-          Industrial monitoring platform for Hydrogen-powered Train systems.
+          Plataforma de monitoreo industrial para sistemas de trenes impulsados por hidrógeno.
         </p>
       </GlassPanel>
     </div>

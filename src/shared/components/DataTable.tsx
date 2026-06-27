@@ -23,7 +23,7 @@ export function DataTable<T>({
   data,
   keyExtractor,
   className,
-  emptyMessage = "No data available",
+  emptyMessage = "No hay datos disponibles",
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (

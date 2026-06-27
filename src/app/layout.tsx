@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "HydroTrain Monitor",
-  description: "Industrial monitoring platform for Hydrogen-powered Train",
+  description: "Plataforma de monitoreo industrial para trenes impulsados por hidrógeno",
   icons: { icon: "/favicon.ico" },
 };
 
@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[var(--color-background)] text-foreground font-sans">

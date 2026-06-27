@@ -6,14 +6,16 @@ import {
   Background,
   Controls,
   MiniMap,
+  BaseEdge,
+  getBezierPath,
+  Handle,
+  Position,
   type Node,
   type Edge,
   type NodeProps,
   type EdgeProps,
   useNodesState,
   useEdgesState,
-  BaseEdge,
-  getBezierPath,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,30 +28,37 @@ import { useDigitalTwinStore } from "@/store/digital-twin.store";
 import type { ComponentId } from "@/shared/types";
 
 const NODE_CONFIG: Record<ComponentId, { label: string; icon: string; color: string }> = {
-  "hydrogen-tank": { label: "Hydrogen Tank", icon: "💧", color: "#14b8a6" },
-  "fuel-cell": { label: "Fuel Cell", icon: "⚡", color: "#3b82f6" },
-  "battery": { label: "Battery", icon: "🔋", color: "#22c55e" },
-  "inverter": { label: "Inverter", icon: "🔄", color: "#a855f7" },
-  "traction-motor": { label: "Traction Motor", icon: "⚙️", color: "#f59e0b" },
-  "wheels": { label: "Wheels", icon: "🚂", color: "#ef4444" },
+  "hydrogen-tank": { label: "Tanque de H₂", icon: "💧", color: "#14b8a6" },
+  "fuel-cell": { label: "Celda de Combustible", icon: "⚡", color: "#3b82f6" },
+  "battery": { label: "Batería", icon: "🔋", color: "#22c55e" },
+  "inverter": { label: "Inversor", icon: "🔄", color: "#a855f7" },
+  "traction-motor": { label: "Motor de Tracción", icon: "⚙️", color: "#f59e0b" },
+  "wheels": { label: "Ruedas", icon: "🚂", color: "#ef4444" },
 };
 
 const INITIAL_NODES: Node[] = [
-  { id: "hydrogen-tank", type: "component", position: { x: 50, y: 200 }, data: { componentId: "hydrogen-tank" } },
-  { id: "fuel-cell", type: "component", position: { x: 300, y: 200 }, data: { componentId: "fuel-cell" } },
-  { id: "battery", type: "component", position: { x: 300, y: 400 }, data: { componentId: "battery" } },
-  { id: "inverter", type: "component", position: { x: 550, y: 200 }, data: { componentId: "inverter" } },
-  { id: "traction-motor", type: "component", position: { x: 800, y: 200 }, data: { componentId: "traction-motor" } },
-  { id: "wheels", type: "component", position: { x: 1050, y: 200 }, data: { componentId: "wheels" } },
+  { id: "hydrogen-tank", type: "component", position: { x: 80, y: 300 }, data: { componentId: "hydrogen-tank" } },
+  { id: "fuel-cell", type: "component", position: { x: 370, y: 300 }, data: { componentId: "fuel-cell" } },
+  { id: "battery", type: "component", position: { x: 370, y: 500 }, data: { componentId: "battery" } },
+  { id: "inverter", type: "component", position: { x: 660, y: 300 }, data: { componentId: "inverter" } },
+  { id: "traction-motor", type: "component", position: { x: 950, y: 300 }, data: { componentId: "traction-motor" } },
+  { id: "wheels", type: "component", position: { x: 1240, y: 300 }, data: { componentId: "wheels" } },
 ];
 
+const EDGE_STYLE = { stroke: "#3b82f6", strokeWidth: 2, opacity: 0.6 };
+const EDGE_ANIMATED_STYLE = {
+  ...EDGE_STYLE,
+  strokeDasharray: "6 4",
+  opacity: 0.9,
+};
+
 const INITIAL_EDGES: Edge[] = [
-  { id: "e1", source: "hydrogen-tank", target: "fuel-cell", type: "powerflow", label: "H₂ Flow", animated: true },
-  { id: "e2", source: "fuel-cell", target: "inverter", type: "powerflow", label: "DC Power", animated: true },
-  { id: "e3", source: "battery", target: "inverter", type: "powerflow", label: "DC Power", animated: true },
-  { id: "e4", source: "fuel-cell", target: "battery", type: "powerflow", label: "Charge", animated: true },
-  { id: "e5", source: "inverter", target: "traction-motor", type: "powerflow", label: "AC Power", animated: true },
-  { id: "e6", source: "traction-motor", target: "wheels", type: "powerflow", label: "Torque", animated: true },
+  { id: "e1", source: "hydrogen-tank", target: "fuel-cell", type: "animated", label: "H₂" },
+  { id: "e2", source: "fuel-cell", target: "inverter", type: "animated", label: "DC" },
+  { id: "e3", source: "battery", target: "inverter", type: "animated", label: "DC" },
+  { id: "e4", source: "fuel-cell", target: "battery", type: "animated", label: "Carga" },
+  { id: "e5", source: "inverter", target: "traction-motor", type: "animated", label: "AC" },
+  { id: "e6", source: "traction-motor", target: "wheels", type: "animated", label: "Torque" },
 ];
 
 function ComponentNode({ data }: NodeProps) {
@@ -63,13 +72,14 @@ function ComponentNode({ data }: NodeProps) {
     <div
       onClick={() => selectComponent(componentId)}
       className={cn(
-        "glass-card p-4 cursor-pointer min-w-[140px] transition-all duration-200",
+        "glass-card p-4 cursor-pointer min-w-[160px] transition-all duration-200",
         "hover:border-[var(--color-primary)] hover:shadow-[0_0_20px_rgba(59,130,246,0.2)]",
         comp?.metrics.health && comp.metrics.health < 40 && "border-[var(--color-destructive)]",
         comp?.metrics.health && comp.metrics.health >= 40 && comp.metrics.health < 70 && "border-[var(--color-warning)]",
         comp?.metrics.health && comp.metrics.health >= 70 && "border-[var(--color-glass-border)]",
       )}
     >
+      <Handle type="target" position={Position.Left} className="!bg-primary !w-3 !h-3 !border-2 !border-[var(--color-background)]" />
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xl">{config.icon}</span>
         <span className="text-sm font-semibold text-foreground">{config.label}</span>
@@ -77,7 +87,7 @@ function ComponentNode({ data }: NodeProps) {
       {comp ? (
         <div className="space-y-1">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[var(--color-muted)]">Power</span>
+            <span className="text-[var(--color-muted)]">Potencia</span>
             <span className="text-foreground font-mono">{comp.metrics.power.toFixed(0)} kW</span>
           </div>
           <div className="flex items-center justify-between text-xs">
@@ -102,11 +112,12 @@ function ComponentNode({ data }: NodeProps) {
       ) : (
         <div className="h-16 animate-pulse bg-[var(--color-secondary)] rounded" />
       )}
+      <Handle type="source" position={Position.Right} className="!bg-primary !w-3 !h-3 !border-2 !border-[var(--color-background)]" />
     </div>
   );
 }
 
-function PowerFlowEdge({
+function AnimatedEdge({
   sourceX,
   sourceY,
   targetX,
@@ -125,13 +136,11 @@ function PowerFlowEdge({
 
   return (
     <>
-      <BaseEdge path={edgePath} style={{ stroke: "rgba(59, 130, 246, 0.4)", strokeWidth: 2 }} />
+      <BaseEdge path={edgePath} style={EDGE_STYLE} />
       <BaseEdge
         path={edgePath}
         style={{
-          stroke: "rgba(59, 130, 246, 0.8)",
-          strokeWidth: 2,
-          strokeDasharray: "8 4",
+          ...EDGE_ANIMATED_STYLE,
           animation: "flow 1s linear infinite",
         }}
       />
@@ -140,7 +149,7 @@ function PowerFlowEdge({
 }
 
 const nodeTypes = { component: ComponentNode };
-const edgeTypes = { powerflow: PowerFlowEdge };
+const edgeTypes = { animated: AnimatedEdge };
 
 export default function DigitalTwinPage() {
   const [nodes, _setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
@@ -163,31 +172,44 @@ export default function DigitalTwinPage() {
   };
 
   return (
-    <div className="p-6 h-full flex flex-col">
-      <PageHeader title="Digital Twin" description="Interactive system diagram" />
+    <div className="p-4 md:p-6 h-full flex flex-col">
+      <PageHeader title="Gemelo Digital" description="Diagrama interactivo del sistema" />
 
       <div className="flex-1 flex gap-6 min-h-0">
         <div className="flex-1 glass-card overflow-hidden">
           <ReactFlow
             nodes={nodes}
             edges={edges}
+            nodesConnectable={false}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
             edgeTypes={edgeTypes}
-            fitView
-            fitViewOptions={{ padding: 0.3 }}
+            onInit={(instance) => instance.fitView({ padding: 0.1 })}
             minZoom={0.5}
-            maxZoom={2}
+            maxZoom={2.5}
             defaultEdgeOptions={{
               style: { stroke: "rgba(59, 130, 246, 0.3)", strokeWidth: 2 },
             }}
             proOptions={{ hideAttribution: true }}
+            colorMode="dark"
           >
-            <Background color="rgba(59, 130, 246, 0.05)" gap={20} />
-            <Controls
-              className="bg-[var(--color-card)] border border-[var(--color-glass-border)] rounded-lg [&>button]:text-[var(--color-muted)] [&>button]:border-[var(--color-glass-border)] [&>button]:hover:bg-[var(--color-sidebar-hover)]"
+            <div
+              className="react-flow__background-image"
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundImage: "url(/train-bg.webp)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                opacity: 0.15,
+                pointerEvents: "none",
+                zIndex: 0,
+              }}
             />
+            <Background color="rgba(59, 130, 246, 0.05)" gap={20} />
+            <Controls className="rounded-lg" />
             <MiniMap
               nodeColor={() => "rgba(59, 130, 246, 0.3)"}
               maskColor="rgba(10, 14, 23, 0.8)"
@@ -198,13 +220,21 @@ export default function DigitalTwinPage() {
 
         <AnimatePresence>
           {selectedComponent && (
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              className="w-80 flex-shrink-0"
-            >
-              <GlassPanel className="p-5 h-full overflow-y-auto">
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-30 bg-black/50 md:hidden"
+                onClick={() => selectComponent(null)}
+              />
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 50 }}
+                className="w-80 flex-shrink-0 fixed md:relative right-4 top-24 bottom-4 z-40 md:z-auto md:right-auto md:top-auto md:bottom-auto"
+              >
+                <GlassPanel className="p-5 h-full overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{NODE_CONFIG[selectedComponent.id]?.icon}</span>
@@ -222,7 +252,7 @@ export default function DigitalTwinPage() {
 
                 <div className="space-y-3">
                   <h4 className="text-xs font-semibold text-[var(--color-muted)] uppercase tracking-wider">
-                    Metrics
+                    Métricas
                   </h4>
                   {Object.entries(selectedComponent.metrics).map(([key, value]) => {
                     if (typeof value !== "number") return null;
@@ -252,14 +282,15 @@ export default function DigitalTwinPage() {
 
                 <div className="mt-4 pt-4 border-t border-[var(--color-card-border)]">
                   <h4 className="text-xs font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-3">
-                    Events
+                    Eventos
                   </h4>
                   <div className="text-xs text-[var(--color-muted)] text-center py-4">
-                    No recent events for this component
+                    Sin eventos recientes para este componente
                   </div>
                 </div>
-              </GlassPanel>
-            </motion.div>
+                </GlassPanel>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </div>

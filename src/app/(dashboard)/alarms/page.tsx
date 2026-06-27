@@ -15,14 +15,14 @@ const SEVERITY_CONFIG = {
     color: "text-[var(--color-destructive)]",
     bg: "bg-[var(--color-destructive)]/10",
     border: "border-l-[var(--color-destructive)]",
-    label: "Critical",
+    label: "Crítica",
   },
   warning: {
     icon: AlertCircle,
     color: "text-[var(--color-warning)]",
     bg: "bg-[var(--color-warning)]/10",
     border: "border-l-[var(--color-warning)]",
-    label: "Warning",
+    label: "Advertencia",
   },
   info: {
     icon: Info,
@@ -54,10 +54,10 @@ export default function AlarmsPage() {
   }, [alarms, filter]);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       <PageHeader
-        title="Alarms"
-        description="Alarm monitoring center"
+        title="Alertas"
+        description="Centro de monitoreo de alertas"
         actions={
           alarms.length > 0 && (
             <button
@@ -65,7 +65,7 @@ export default function AlarmsPage() {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--color-muted)] border border-[var(--color-glass-border)] hover:bg-[var(--color-sidebar-hover)] transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              Clear All
+              Limpiar Todo
             </button>
           )
         }
@@ -74,43 +74,49 @@ export default function AlarmsPage() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2 text-xs text-[var(--color-muted)]">
           <Filter className="w-3.5 h-3.5" />
-          <span>Severity:</span>
+          <span>Severidad:</span>
         </div>
-        {["all", "critical", "warning", "info"].map((sev) => (
-          <button
-            key={sev}
-            onClick={() => setFilter({ ...filter, severity: sev })}
-            className={cn(
-              "px-3 py-1 rounded-lg text-xs font-medium transition-all",
-              filter.severity === sev
-                ? "bg-[var(--color-primary-muted)] text-primary border border-[var(--color-primary)]/30"
-                : "text-[var(--color-muted)] border border-[var(--color-glass-border)] hover:bg-[var(--color-sidebar-hover)]",
-            )}
-          >
-            {sev.charAt(0).toUpperCase() + sev.slice(1)}
-          </button>
-        ))}
+        {["all", "critical", "warning", "info"].map((sev) => {
+          const sevLabels: Record<string, string> = { all: "Todas", critical: "Crítica", warning: "Advertencia", info: "Info" };
+          return (
+            <button
+              key={sev}
+              onClick={() => setFilter({ ...filter, severity: sev })}
+              className={cn(
+                "px-3 py-1 rounded-lg text-xs font-medium transition-all",
+                filter.severity === sev
+                  ? "bg-[var(--color-primary-muted)] text-primary border border-[var(--color-primary)]/30"
+                  : "text-[var(--color-muted)] border border-[var(--color-glass-border)] hover:bg-[var(--color-sidebar-hover)]",
+              )}
+            >
+              {sevLabels[sev]}
+            </button>
+          );
+        })}
         <div className="w-px h-5 bg-[var(--color-glass-border)] mx-1" />
         <div className="flex items-center gap-2 text-xs text-[var(--color-muted)]">
-          <span>Status:</span>
+          <span>Estado:</span>
         </div>
-        {["all", "unacknowledged", "acknowledged"].map((ack) => (
-          <button
-            key={ack}
-            onClick={() => setFilter({ ...filter, acknowledged: ack })}
-            className={cn(
-              "px-3 py-1 rounded-lg text-xs font-medium transition-all",
-              filter.acknowledged === ack
-                ? "bg-[var(--color-primary-muted)] text-primary border border-[var(--color-primary)]/30"
-                : "text-[var(--color-muted)] border border-[var(--color-glass-border)] hover:bg-[var(--color-sidebar-hover)]",
-            )}
-          >
-            {ack === "all" ? "All" : ack.charAt(0).toUpperCase() + ack.slice(1)}
-          </button>
-        ))}
+        {["all", "unacknowledged", "acknowledged"].map((ack) => {
+          const ackLabels: Record<string, string> = { all: "Todos", unacknowledged: "No Reconocidas", acknowledged: "Reconocidas" };
+          return (
+            <button
+              key={ack}
+              onClick={() => setFilter({ ...filter, acknowledged: ack })}
+              className={cn(
+                "px-3 py-1 rounded-lg text-xs font-medium transition-all",
+                filter.acknowledged === ack
+                  ? "bg-[var(--color-primary-muted)] text-primary border border-[var(--color-primary)]/30"
+                  : "text-[var(--color-muted)] border border-[var(--color-glass-border)] hover:bg-[var(--color-sidebar-hover)]",
+              )}
+            >
+              {ackLabels[ack]}
+            </button>
+          );
+        })}
         {unreadCount > 0 && (
           <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--color-destructive)]/20 text-[var(--color-destructive)]">
-            {unreadCount} unread
+            {unreadCount} no leídas
           </span>
         )}
       </div>
@@ -120,7 +126,7 @@ export default function AlarmsPage() {
           {filteredAlarms.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-[var(--color-muted)]">
               <CheckCircle className="w-8 h-8 mb-2" />
-              <span className="text-sm">No alarms</span>
+              <span className="text-sm">Sin alertas</span>
             </div>
           ) : (
             filteredAlarms.map((alarm) => {
@@ -155,8 +161,8 @@ export default function AlarmsPage() {
                         <div className="flex items-center gap-3 text-[10px] text-[var(--color-muted)]">
                           <span>{formatDateTime(alarm.timestamp)}</span>
                           <span>{alarm.componentName}</span>
-                          {alarm.acknowledged && <span className="text-[var(--color-info)]">Acknowledged</span>}
-                          {alarm.resolved && <span className="text-[var(--color-success)]">Resolved</span>}
+                          {alarm.acknowledged && <span className="text-[var(--color-info)]">Reconocida</span>}
+                          {alarm.resolved && <span className="text-[var(--color-success)]">Resuelta</span>}
                         </div>
                       </div>
                       <div className="flex items-center gap-1 flex-shrink-0">
@@ -164,7 +170,7 @@ export default function AlarmsPage() {
                           <button
                             onClick={() => acknowledge(alarm.id)}
                             className="p-1.5 rounded-lg text-[var(--color-muted)] hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-info)] transition-colors"
-                            title="Acknowledge"
+                            title="Reconocer"
                           >
                             <CheckCircle className="w-3.5 h-3.5" />
                           </button>
@@ -173,7 +179,7 @@ export default function AlarmsPage() {
                           <button
                             onClick={() => resolve(alarm.id)}
                             className="p-1.5 rounded-lg text-[var(--color-muted)] hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-success)] transition-colors"
-                            title="Resolve"
+                            title="Resolver"
                           >
                             <XCircle className="w-3.5 h-3.5" />
                           </button>

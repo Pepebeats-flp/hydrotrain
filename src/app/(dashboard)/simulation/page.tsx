@@ -11,12 +11,12 @@ export default function SimulationPage() {
   const { running, config, toggle, reset, updateConfig } = useSimulationStore();
 
   return (
-    <div className="p-6 space-y-6">
-      <PageHeader title="Simulation" description="Data simulation controls" />
+    <div className="p-4 md:p-6 space-y-6">
+      <PageHeader title="Simulación" description="Controles de simulación de datos" />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GlassPanel className="p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-4">Controls</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-4">Controles</h3>
           <div className="flex items-center gap-3 mb-6">
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -30,9 +30,9 @@ export default function SimulationPage() {
               )}
             >
               {running ? (
-                <><Square className="w-4 h-4" /> Stop Simulation</>
+                <><Square className="w-4 h-4" /> Detener Simulación</>
               ) : (
-                <><Play className="w-4 h-4" /> Start Simulation</>
+                <><Play className="w-4 h-4" /> Iniciar Simulación</>
               )}
             </motion.button>
             <button
@@ -40,7 +40,7 @@ export default function SimulationPage() {
               className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium text-[var(--color-muted)] border border-[var(--color-glass-border)] hover:bg-[var(--color-sidebar-hover)] transition-all"
             >
               <RotateCcw className="w-4 h-4" />
-              Reset
+              Reiniciar
             </button>
           </div>
 
@@ -51,16 +51,16 @@ export default function SimulationPage() {
               : "bg-[var(--color-secondary)] text-[var(--color-muted)]",
           )}>
             <span className={cn("w-1.5 h-1.5 rounded-full", running ? "bg-[var(--color-success)] animate-pulse" : "bg-[var(--color-muted)]")} />
-            {running ? "Simulation Running" : "Simulation Stopped"}
+            {running ? "Simulación Activa" : "Simulación Detenida"}
           </div>
         </GlassPanel>
 
         <GlassPanel className="p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-4">Configuration</h3>
+          <h3 className="text-sm font-semibold text-foreground mb-4">Configuración</h3>
           <div className="space-y-4">
             <div>
               <label className="flex items-center justify-between text-xs text-[var(--color-muted)] mb-2">
-                <span>Tick Interval</span>
+                <span>Intervalo</span>
                 <span className="font-mono text-foreground">{config.tickInterval}ms</span>
               </label>
               <input
@@ -74,7 +74,7 @@ export default function SimulationPage() {
             </div>
             <div>
               <label className="flex items-center justify-between text-xs text-[var(--color-muted)] mb-2">
-                <span>Speed Multiplier</span>
+                <span>Multiplicador de Velocidad</span>
                 <span className="font-mono text-foreground">{config.speedMultiplier}x</span>
               </label>
               <input
@@ -90,7 +90,7 @@ export default function SimulationPage() {
             <div className="flex items-center justify-between pt-2 border-t border-[var(--color-card-border)]">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-[var(--color-muted)]" />
-                <span className="text-xs text-[var(--color-muted)]">Fault Injection</span>
+                <span className="text-xs text-[var(--color-muted)]">Inyección de Fallos</span>
               </div>
               <button
                 onClick={() => updateConfig({ faultInjection: !config.faultInjection })}
@@ -112,12 +112,13 @@ export default function SimulationPage() {
       </div>
 
       <GlassPanel className="p-5">
-        <h3 className="text-sm font-semibold text-foreground mb-3">Simulation Information</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3">Información de la Simulación</h3>
         <p className="text-xs text-[var(--color-muted)] leading-relaxed">
-          The simulator continuously generates realistic telemetry data for all train subsystems.
-          It models hydrogen consumption, fuel cell temperature dynamics, battery charge/discharge cycles,
-          motor RPM and torque variations, and occasional fault conditions for realistic alarm generation.
-          When the backend is integrated, this simulator will be replaced by live data from the CAN Bus gateway.
+          El simulador genera continuamente datos de telemetría realistas para todos los subsistemas del tren.
+          Modela el consumo de hidrógeno, la dinámica de temperatura de la celda de combustible,
+          los ciclos de carga/descarga de la batería, las variaciones de RPM y torque del motor,
+          y condiciones de fallo ocasionales para una generación realista de alertas.
+          Cuando el backend esté integrado, este simulador será reemplazado por datos en vivo del gateway CAN Bus.
         </p>
       </GlassPanel>
     </div>

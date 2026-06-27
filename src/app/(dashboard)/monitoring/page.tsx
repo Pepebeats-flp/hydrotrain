@@ -10,34 +10,29 @@ import { useMonitoringStore } from "@/store/monitoring.store";
 
 const VARIABLE_GROUPS = [
   {
-    label: "Temperature",
+    label: "Temperatura",
     color: "border-l-[var(--color-destructive)]",
     variables: ["fuel-cell-temp", "inverter-temp", "motor-temp"],
   },
   {
-    label: "Power & Energy",
+    label: "Potencia y Energía",
     color: "border-l-[var(--color-info)]",
-    variables: ["system-power", "fuel-cell-power", "battery-power", "inverter-power", "motor-power"],
+    variables: ["system-power", "fuel-cell-power", "inverter-power", "motor-power"],
   },
   {
-    label: "Hydrogen",
+    label: "Hidrógeno",
     color: "border-l-[var(--color-accent)]",
     variables: ["h2-pressure", "h2-flow"],
   },
   {
-    label: "Electrical",
-    color: "border-l-[var(--color-success)]",
-    variables: ["battery-voltage"],
+    label: "Batería",
+    color: "border-l-[var(--color-primary)]",
+    variables: ["battery-soc", "battery-voltage", "battery-power"],
   },
   {
-    label: "Mechanical",
+    label: "Mecánico",
     color: "border-l-[var(--color-warning)]",
     variables: ["motor-rpm", "motor-torque", "wheel-speed"],
-  },
-  {
-    label: "Battery",
-    color: "border-l-[var(--color-primary)]",
-    variables: ["battery-soc"],
   },
 ];
 
@@ -47,16 +42,16 @@ const variableIcons: Record<string, React.ReactNode> = {
   "motor-temp": <Thermometer className="w-4 h-4 text-[var(--color-destructive)]" />,
   "system-power": <Zap className="w-4 h-4 text-[var(--color-info)]" />,
   "fuel-cell-power": <Zap className="w-4 h-4 text-[var(--color-info)]" />,
-  "battery-power": <Battery className="w-4 h-4 text-[var(--color-info)]" />,
   "inverter-power": <Cpu className="w-4 h-4 text-[var(--color-info)]" />,
   "motor-power": <Zap className="w-4 h-4 text-[var(--color-info)]" />,
   "h2-pressure": <Gauge className="w-4 h-4 text-[var(--color-accent)]" />,
   "h2-flow": <Droplets className="w-4 h-4 text-[var(--color-accent)]" />,
-  "battery-voltage": <Activity className="w-4 h-4 text-[var(--color-success)]" />,
+  "battery-voltage": <Activity className="w-4 h-4 text-[var(--color-primary)]" />,
+  "battery-power": <Battery className="w-4 h-4 text-[var(--color-primary)]" />,
+  "battery-soc": <Battery className="w-4 h-4 text-[var(--color-primary)]" />,
   "motor-rpm": <Ruler className="w-4 h-4 text-[var(--color-warning)]" />,
   "motor-torque": <Ruler className="w-4 h-4 text-[var(--color-warning)]" />,
   "wheel-speed": <Gauge className="w-4 h-4 text-[var(--color-warning)]" />,
-  "battery-soc": <Battery className="w-4 h-4 text-[var(--color-primary)]" />,
 };
 
 export default function MonitoringPage() {
@@ -74,8 +69,8 @@ export default function MonitoringPage() {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6">
-        <PageHeader title="Live Monitoring" description="Real-time telemetry" />
+    <div className="p-4 md:p-6 space-y-6">
+        <PageHeader title="Monitoreo en Vivo" description="Datos de telemetría en tiempo real" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="glass-card h-32 animate-pulse" />
@@ -88,8 +83,8 @@ export default function MonitoringPage() {
   return (
     <div className="p-6 space-y-6">
       <PageHeader
-        title="Live Monitoring"
-        description="Real-time telemetry data"
+        title="Monitoreo en Vivo"
+        description="Datos de telemetría en tiempo real"
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

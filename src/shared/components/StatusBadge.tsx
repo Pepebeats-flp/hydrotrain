@@ -10,23 +10,23 @@ interface StatusBadgeProps {
 
 const STATUS_CONFIG: Record<ComponentStatus, { label: string; color: string }> = {
   operational: {
-    label: "Operational",
+    label: "Operacional",
     color: "bg-[var(--color-success)] shadow-[0_0_8px_rgba(34,197,94,0.3)]",
   },
   warning: {
-    label: "Warning",
+    label: "Advertencia",
     color: "bg-[var(--color-warning)] shadow-[0_0_8px_rgba(245,158,11,0.3)]",
   },
   critical: {
-    label: "Critical",
+    label: "Crítico",
     color: "bg-[var(--color-destructive)] shadow-[0_0_8px_rgba(239,68,68,0.3)]",
   },
   offline: {
-    label: "Offline",
+    label: "Desconectado",
     color: "bg-[var(--color-muted)]",
   },
   maintenance: {
-    label: "Maintenance",
+    label: "Mantenimiento",
     color: "bg-[var(--color-info)] shadow-[0_0_8px_rgba(59,130,246,0.3)]",
   },
 };
