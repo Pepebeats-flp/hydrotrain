@@ -5,7 +5,6 @@ import { Sidebar } from "@/shared/components/Sidebar";
 import { useDashboardStore } from "@/store/dashboard.store";
 import { useAlarmStore } from "@/store/alarm.store";
 import { useMonitoringStore } from "@/store/monitoring.store";
-import { useDigitalTwinStore } from "@/store/digital-twin.store";
 import { useSimulationStore } from "@/store/simulation.store";
 import { useSidebarStore } from "@/store/sidebar.store";
 import { Menu } from "lucide-react";
@@ -15,23 +14,20 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
   const fetchDashboard = useDashboardStore((s) => s.fetch);
   const initializeAlarms = useAlarmStore((s) => s.initialize);
   const initializeMonitoring = useMonitoringStore((s) => s.initialize);
-  const fetchComponents = useDigitalTwinStore((s) => s.fetchComponents);
   const running = useSimulationStore((s) => s.running);
   const toggle = useSimulationStore((s) => s.toggle);
 
   useEffect(() => {
-    fetchDashboard();
-    fetchComponents();
-    const unsubAlarms = initializeAlarms();
-    const unsubMonitoring = initializeMonitoring();
-
     if (!running) {
       toggle();
     }
 
+    fetchDashboard();
+    const unsubAlarms = initializeAlarms();
+    const unsubMonitoring = initializeMonitoring();
+
     const dashboardInterval = setInterval(() => {
       fetchDashboard(true);
-      fetchComponents();
     }, 500);
 
     return () => {
@@ -39,7 +35,6 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       unsubAlarms();
       unsubMonitoring();
     };
-    // Zustand selectors return stable references - safe to run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
